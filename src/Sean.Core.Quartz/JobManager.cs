@@ -8,6 +8,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Quartz.Simpl;
+#if NETSTANDARD
+using QuartzRemoteScheduler.Server;
+#endif
 
 namespace Sean.Core.Quartz
 {
@@ -20,17 +23,15 @@ namespace Sean.Core.Quartz
         private readonly ISchedulerFactory _schedulerFactory;// 调度器工厂
         private readonly IScheduler _scheduler;// 调度器
 
-        public JobManager(
-#if !NETSTANDARD
-            Action<RemoteSchedulerServerOptions> serverConfig = null
-#endif
-            )
+        public JobManager(Action<RemoteSchedulerServerOptions> remoteSchedulerConfig = null)
         {
+            var options = new RemoteSchedulerServerOptions();
+            remoteSchedulerConfig?.Invoke(options);
+
 #if !NETSTANDARD
             // https://www.quartz-scheduler.net/documentation/quartz-3.x/configuration/reference.html#remoting-server-and-client
             // WARNING: Remoting only works with .NET Full Framework. It's also considered unsafe.
-            var options = new RemoteSchedulerServerOptions();
-            serverConfig?.Invoke(options);
+           
             if (!options.EnableRemoteScheduler)
             {
                 _schedulerFactory = new StdSchedulerFactory();
@@ -47,7 +48,23 @@ namespace Sean.Core.Quartz
                 _schedulerFactory = new StdSchedulerFactory(properties);
             }
 #else
-            _schedulerFactory = new StdSchedulerFactory();
+            // https://github.com/kaaja-h/QuartzRemoteScheduler => Plugin for quartz.net scheduler for enablign remote scheduler control
+
+            if (!options.EnableRemoteScheduler)
+            {
+                _schedulerFactory = new StdSchedulerFactory();
+            }
+            else
+            {
+                var conf = new NameValueCollection
+                {
+                    ["quartz.plugin.remoteScheduler.type"] = typeof(RemoteSchedulerServerPlugin).AssemblyQualifiedName,
+                    ["quartz.plugin.remoteScheduler.address"] = "0.0.0.0",
+                    ["quartz.plugin.remoteScheduler.port"] = options.Port.ToString(),
+                    ["quartz.plugin.remoteScheduler.enableNegotiateStream"] = "false"
+                };
+                _schedulerFactory = new StdSchedulerFactory(conf);
+            }
 #endif
 
             _scheduler = _schedulerFactory.GetScheduler().Result;

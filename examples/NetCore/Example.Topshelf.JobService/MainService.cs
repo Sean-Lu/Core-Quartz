@@ -18,24 +18,28 @@ namespace Example.Topshelf.JobService
         public MainService(ISimpleLogger<MainService> logger)
         {
             _logger = logger;//IocContainer.Instance.GetService<ISimpleLogger<MainService>>();
-            _jobManager = new JobManager();
+            _jobManager = new JobManager(options =>
+            {
+                options.EnableRemoteScheduler = true;
+                options.Port = 9192;
+            });
 
             var list = new List<JobOptions>
             {
-                new JobOptions
-                {
-                    JobType = typeof(TestJob),
-                    ScheduleType = ScheduleType.SimpleSchedule,
-                    SimpleScheduleAction = c => c.WithIntervalInSeconds(1).RepeatForever(), // 每秒执行1次
-                    IsStartNow = true
-                },
                 //new JobOptions
                 //{
                 //    JobType = typeof(TestJob),
-                //    ScheduleType = ScheduleType.CronSchedule,
-                //    CronExpression = "*/1 * * * * ?", // 每秒执行1次
+                //    ScheduleType = ScheduleType.SimpleSchedule,
+                //    SimpleScheduleAction = c => c.WithIntervalInSeconds(1).RepeatForever(), // 每秒执行1次
                 //    IsStartNow = true
-                //}
+                //},
+                new JobOptions
+                {
+                    JobType = typeof(TestJob),
+                    ScheduleType = ScheduleType.CronSchedule,
+                    CronExpression = "0 0 12 * * ?", // 每天12:00执行1次
+                    IsStartNow = true
+                }
             };
 
             list.ForEach(c => _jobManager.ScheduleJob(c).Wait());

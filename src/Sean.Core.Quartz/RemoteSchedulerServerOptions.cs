@@ -15,6 +15,7 @@
         /// </summary>
         public int Port { get; set; } = 9192;
 
+#if !NETSTANDARD
         /// <summary>
         /// 协议类型，默认值：tcp
         /// </summary>
@@ -24,5 +25,6 @@
         /// 绑定名称，默认值：QuartzScheduler
         /// </summary>
         public string BindName { get; set; } = "QuartzScheduler";
+#endif
     }
 }

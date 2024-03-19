@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{302F6087-4B5D-4D7E-9AB2-6634E6CA1770}</ProjectGuid>
+    <ProjectGuid>{A4A0A975-A306-42BF-A8CF-D6EB6EF1F0E6}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Example.RemoteScheduler</RootNamespace>
-    <AssemblyName>Example.RemoteScheduler</AssemblyName>
+    <RootNamespace>Example.Simple.ConsoleApp</RootNamespace>
+    <AssemblyName>Example.Simple.ConsoleApp</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -37,6 +37,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Job\TestJob.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -50,6 +51,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions">
+      <Version>8.0.1</Version>
+    </PackageReference>
     <PackageReference Include="Quartz">
       <Version>3.8.1</Version>
     </PackageReference>

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Example.Hosting.JobService.Jobs;
 using Microsoft.Extensions.Hosting;
 using Sean.Core.Quartz;
+using Sean.Utility;
 using Sean.Utility.Contracts;
 using Sean.Utility.Extensions;
 using Sean.Utility.Impls.Log;
@@ -21,6 +22,8 @@ namespace Example.Hosting.JobService
             _jobManager = new JobManager();
 
             SimpleLocalLoggerBase.DateTimeFormat = time => time.ToLongDateTime();
+
+            ExceptionHelper.CatchGlobalUnhandledException(_logger);
 
             var list = new List<JobOptions>
             {

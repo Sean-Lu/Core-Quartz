@@ -15,7 +15,7 @@
         /// </summary>
         public int Port { get; set; } = 9192;
 
-#if !NETSTANDARD
+#if NETFRAMEWORK
         /// <summary>
         /// 协议类型，默认值：tcp
         /// </summary>

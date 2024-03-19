@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Sean.Core.Ioc;
-using Sean.Core.Topshelf;
-using Sean.Utility.Contracts;
+﻿using Sean.Utility.Contracts;
 using Sean.Utility.Extensions;
 using Sean.Utility.Impls.Log;
+using System.Configuration;
+using Sean.Core.DependencyInjection;
+using Topshelf;
 
 namespace Example.Topshelf.JobService
 {
@@ -15,18 +11,75 @@ namespace Example.Topshelf.JobService
     {
         static void Main(string[] args)
         {
-            IocContainer.Instance.ConfigureServices(services =>
+            DIManager.Register(container =>
             {
-                services.AddTransient(typeof(ISimpleLogger<>), typeof(SimpleLocalLogger<>));
+                container.RegisterType(typeof(ISimpleLogger<>), typeof(SimpleLocalLogger<>), ServiceLifeStyle.Transient);
             });
 
             SimpleLocalLoggerBase.DateTimeFormat = time => time.ToLongDateTime();
 
-            //var logger = ServiceManager.GetService<ISimpleLogger<Program>>();
-            //var configuration = ServiceManager.GetService<IConfiguration>();
+            HostFactory.Run(x =>
+            {
+                var serviceName = ConfigurationManager.AppSettings["ServiceName"];
+                var serviceDisplayName = ConfigurationManager.AppSettings["ServiceDisplayName"];
+                var serviceDescription = ConfigurationManager.AppSettings["ServiceDescription"];
 
-            var serviceManager = new HostedServiceManager(options => { });
-            serviceManager.RunService<MainService>((x, options) => { });
+                x.SetServiceName(serviceName);
+                x.SetDisplayName(serviceDisplayName);
+                x.SetDescription(serviceDescription);
+
+                x.Service<MainService>(sc =>
+                {
+                    sc.ConstructUsing(settings =>
+                    {
+                        var service = DIManager.Resolve<MainService>();
+                        service.Settings = settings;
+                        return service;
+                    });
+                    sc.WhenStarted(s => s.Start());
+                    sc.WhenStopped(s => s.Stop());
+                    //sc.WhenPaused(s => s.Pause());
+                    //sc.WhenContinued(s => s.Continue());
+                    //sc.WhenShutdown(s => s.Shutdown());
+                });
+
+                // 服务启动类型
+                x.StartAutomatically();
+
+                // 服务运行身份
+                x.RunAsLocalSystem();
+
+                //x.EnablePauseAndContinue();
+                //x.EnableShutdown();
+
+                // 服务依赖项
+                //x.DependsOn(name);
+
+                //x.BeforeInstall(settings => { logger.LogInfo("Install service => Start"); });
+                //x.AfterInstall(settings => { logger.LogInfo("Install service => End"); });
+                //x.BeforeUninstall(() => { logger.LogInfo("Uninstall service => Start"); });
+                //x.AfterUninstall(() => { logger.LogInfo("Uninstall service => End"); });
+
+                // 自动恢复设置（服务重启）
+                x.EnableServiceRecovery(r =>
+                {
+                    var delay = 0;
+                    // 第1次失败：重启服务
+                    r.RestartService(delay);
+
+                    // 第2次失败：运行指定外部程序
+                    //r.RunProgram(delay, "command");
+
+                    // 第3次失败：重启计算机
+                    //r.RestartComputer(delay, string.Format("Service {0} crashed!", serviceName));
+
+                    // 仅服务崩溃时重启服务
+                    r.OnCrashOnly();
+
+                    // 恢复计算周期
+                    r.SetResetPeriod(1);
+                });
+            });
         }
     }
 }

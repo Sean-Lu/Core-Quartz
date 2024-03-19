@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Sean.Core.Hosting" Version="1.0.1" />
-    <PackageReference Include="Sean.Utility" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Sean.Utility" Version="2.1.4" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+		<TargetFrameworks>net462;net472;net6;netstandard2.0</TargetFrameworks>
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Authors>Sean</Authors>
@@ -11,11 +11,15 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Quartz" Version="3.3.2" />
+		<PackageReference Include="Quartz" Version="3.8.1" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+		<PackageReference Include="Kaaja.QuartzRemoteScheduler" Version="0.1.0" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net6'">
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 		<PackageReference Include="Kaaja.QuartzRemoteScheduler" Version="0.1.0" />
 	</ItemGroup>
 

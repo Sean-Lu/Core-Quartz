@@ -37,6 +37,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DIManager.cs" />
     <Compile Include="Jobs\TestJob.cs" />
     <Compile Include="MainService.cs" />
     <Compile Include="Program.cs" />
@@ -44,6 +45,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="InstallService.bat" />
+    <None Include="StartService.bat" />
+    <None Include="StopService.bat" />
+    <None Include="UninstallService.bat" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Sean.Core.Quartz\Sean.Core.Quartz.csproj">
@@ -53,16 +58,16 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Quartz">
-      <Version>3.3.2</Version>
+      <Version>3.8.1</Version>
     </PackageReference>
-    <PackageReference Include="Sean.Core.Ioc">
-      <Version>1.0.3</Version>
-    </PackageReference>
-    <PackageReference Include="Sean.Core.Topshelf">
-      <Version>1.0.4</Version>
+    <PackageReference Include="Sean.Core.DependencyInjection">
+      <Version>1.0.1</Version>
     </PackageReference>
     <PackageReference Include="Sean.Utility">
-      <Version>2.1.1</Version>
+      <Version>2.1.4</Version>
+    </PackageReference>
+    <PackageReference Include="Topshelf">
+      <Version>4.3.0</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

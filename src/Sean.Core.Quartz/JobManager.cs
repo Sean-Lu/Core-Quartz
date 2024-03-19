@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Quartz.Simpl;
-#if NETSTANDARD
+#if !NETFRAMEWORK
 using QuartzRemoteScheduler.Server;
 #endif
 
@@ -28,10 +28,10 @@ namespace Sean.Core.Quartz
             var options = new RemoteSchedulerServerOptions();
             remoteSchedulerConfig?.Invoke(options);
 
-#if !NETSTANDARD
+#if NETFRAMEWORK
             // https://www.quartz-scheduler.net/documentation/quartz-3.x/configuration/reference.html#remoting-server-and-client
             // WARNING: Remoting only works with .NET Full Framework. It's also considered unsafe.
-           
+
             if (!options.EnableRemoteScheduler)
             {
                 _schedulerFactory = new StdSchedulerFactory();
@@ -74,7 +74,7 @@ namespace Sean.Core.Quartz
             }
         }
 
-#if !NETSTANDARD
+#if NETFRAMEWORK
         /// <summary>
         /// 
         /// </summary>
@@ -201,6 +201,7 @@ namespace Sean.Core.Quartz
                     throw new Exception($"Unsupported ScheduleType：{options.ScheduleType}");
             }
 
+            // 当使用 Cron 表达式时，StartNow 方法不会起任何效果，Cron 有其自己的执行时间。目前看来 StartNow 应该只适用于 SimpleTrigger 触发器。
             ITrigger jobTrigger = options.IsStartNow && options.ScheduleType != ScheduleType.CronSchedule ? triggerBuilder.StartNow().Build() : triggerBuilder.Build();
 
             //await _scheduler.AddJob(jobDetail, true);

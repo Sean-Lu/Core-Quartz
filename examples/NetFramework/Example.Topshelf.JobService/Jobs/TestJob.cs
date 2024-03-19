@@ -1,27 +1,22 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Quartz;
-using Sean.Core.Ioc;
-using Sean.Core.Quartz;
 using Sean.Utility.Contracts;
 using Sean.Utility.Extensions;
 
 namespace Example.Topshelf.JobService.Jobs
 {
-    /// <summary>
-    /// 测试Job
-    /// </summary>
     [DisallowConcurrentExecution]
-    public class TestJob : JobBase
+    public class TestJob : IJob
     {
         private readonly ILogger _logger;
 
         public TestJob()
         {
-            _logger = IocContainer.Instance.GetService<ISimpleLogger<TestJob>>(); ;
+            _logger = DIManager.Resolve<ISimpleLogger<TestJob>>();
         }
 
-        protected override Task ExecuteJob(IJobExecutionContext context)
+        public Task Execute(IJobExecutionContext context)
         {
             var jobName = context.JobDetail.Key.Name;
             _logger.LogInfo($"【{jobName}】{DateTime.Now.ToLongDateTime()}");

@@ -6,12 +6,12 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Authors>Sean</Authors>
 		<Description>Quartz</Description>
-		<Version>1.0.2</Version>
+		<Version>1.0.3</Version>
 		<PackageProjectUrl>https://github.com/Sean-Lu/Core-Quartz</PackageProjectUrl>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Quartz" Version="3.9.0" />
+		<PackageReference Include="Quartz" Version="3.11.0" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
